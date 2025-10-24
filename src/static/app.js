@@ -10,16 +10,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Clear loading message and dropdown
       activitiesList.innerHTML = "";
+      // Remove all options except the first placeholder
+      while (activitySelect.options.length > 1) {
+        activitySelect.remove(1);
+      }
 
-      // Populate activities list
+      // Populate activities list and dropdown
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
-
 
         // Create participants list HTML with delete icon
         const participantsList = details.participants.length > 0
@@ -46,14 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
           ${participantsList}
         `;
 
+        activitiesList.appendChild(activityCard);
 
-  activitiesList.appendChild(activityCard);
-
-  // Add option to select dropdown
-  const option = document.createElement("option");
-  option.value = name;
-  option.textContent = name;
-  activitySelect.appendChild(option);
+        // Add option to select dropdown
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        activitySelect.appendChild(option);
       });
     } catch (error) {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
